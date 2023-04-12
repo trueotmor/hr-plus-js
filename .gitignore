@@ -5,8 +5,5 @@ core/cache
 core/config/config.inc.php
 public_html/assets/_cache
 public_html/cgi-bin
-public_html/config.core.php
-public_html/connectors/config.core.php
-public_html/manager/config.core.php
 html
 _docker
