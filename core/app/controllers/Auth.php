@@ -10,7 +10,7 @@ class Auth extends \Zoomx\Controllers\Controller
     public function login()
     {
         $response = $this->modx->runProcessor('/security/login', [
-            'username' => trim($_POST['email'] ?? ''),
+            'username' => trim($_POST['username'] ?? ''),
             'password' => trim($_POST['password'] ?? ''),
             'rememberme' => 1,
             'login_context' => $this->modx->context->key ?? 'web',
@@ -33,14 +33,16 @@ class Auth extends \Zoomx\Controllers\Controller
 
 
     /**
-     * 
+     * @todo распарсить ошибки
      */
     public function register()
     {
+        $email = trim($_POST['email'] ?? '');
+
         $data = [
             "active" => 0,
-            'username' => trim($_POST['email'] ?? ''),
-            'email' => trim($_POST['email'] ?? ''),
+            'username' => $email,
+            'email' => $email,
             'specifiedpassword' => trim($_POST['specifiedpassword'] ?? ''),
             'confirmpassword' => trim($_POST['confirmpassword'] ?? ''),
             'newpassword' => 'passwordgenmethod',
@@ -50,18 +52,26 @@ class Auth extends \Zoomx\Controllers\Controller
 
         $response = $this->modx->runProcessor('security/user/create', $data);
 
-        // @todo распарсить ошибки
+        if ($response->isError()) {
+            return jsonx([
+                'success' => !$response->isError(),
+                'message' => $response->getMessage() ?? '',
+                'errors' => $response->getAllErrors() ?? [],
+            ]);
+        }
+
+        $user = $this->modx->getObject('modUser', ['username' => $email]);
+
+        $mail_params = [
+            'subject' => 'Тема регистрация',
+            'content' => 'Содержание письма регистрация ' . $user->password,
+        ];
+        email($email, $mail_params);
+
         return jsonx([
             'success' => !$response->isError(),
             'message' => $response->getMessage() ?? '',
             'errors' => $response->getAllErrors() ?? [],
         ]);
-
-        if ($response->isError()) {
-            $errors = $response->getAllErrors();
-            return[0, $errors];
-        } else {
-            return[1, $response->getMessage()];
-        }
     }
 }

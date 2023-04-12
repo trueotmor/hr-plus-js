@@ -6,7 +6,7 @@
 
 ```
 POST /api/auth/login
-{ userneme: string (email), password: string }
+{ username: string (email), password: string }
 { success: bool, message: string (сообщение об ошибке) }
 ```
 
