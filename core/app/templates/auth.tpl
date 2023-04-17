@@ -4,7 +4,9 @@
         
     </head>
 
-    <body class="">
-        auth.tpl
+    <body>
+        <div id="app"></div>
     </body>
 </html>
+
+{'@FILE vite_scripts'|snippet:[] nocache}

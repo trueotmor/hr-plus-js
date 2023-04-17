@@ -61,12 +61,14 @@ class Auth extends \Zoomx\Controllers\Controller
         }
 
         $user = $this->modx->getObject('modUser', ['username' => $email]);
+        $confirm_key = md5($user->username . ':' .$user->password);
+        $confirm_link = $this->modx->getOption('site_url') . "auth/confirm?user={$user->username}&key={$confirm_key}";
 
-        $mail_params = [
-            'subject' => 'Тема регистрация',
-            'content' => 'Содержание письма регистрация ' . $user->password,
+        $email_params = [
+            'subject' => 'Подтверждение регистрации',
+            'content' => 'Ссылка для подтверждения: ' . $confirm_link,
         ];
-        email($email, $mail_params);
+        email($email, $email_params);
 
         return jsonx([
             'success' => !$response->isError(),
