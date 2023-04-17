@@ -19,6 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $router->post('/api/auth/login', ['\App\Controllers\Auth', 'login']);
 $router->post('/api/auth/register', ['\App\Controllers\Auth', 'register']);
+$router->post('/api/auth/forgot', ['\App\Controllers\Auth', 'forgot']);
+$router->get('/api/auth/confirm-register', ['\App\Controllers\Auth', 'confirm_register']);
+$router->get('/api/auth/reset-password', ['\App\Controllers\Auth', 'reset_password']);
 
 // $router->get('/crm', function() use ($modx) {
 //     return viewx("crm.tpl");
@@ -26,16 +29,13 @@ $router->post('/api/auth/register', ['\App\Controllers\Auth', 'register']);
 
 
 $router->get('/login', function() use ($modx) {
-    zoomx()->autoloadResource = false;
     return viewx("auth.tpl");
 });
 
 $router->get('/register', function() use ($modx) {
-    zoomx()->autoloadResource = false;
     return viewx("auth.tpl");
 });
 
 $router->get('/', function() use ($modx) {
-    zoomx()->autoloadResource = false;
     return viewx("auth.tpl");
 });
