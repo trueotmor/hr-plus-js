@@ -7,6 +7,15 @@ class Auth extends \Zoomx\Controllers\Controller
     /**
      * 
      */
+    public function is_auth()
+    {
+        return jsonx(['success' => $this->modx->user->isAuthenticated('web')]);
+    }
+
+
+    /**
+     * 
+     */
     public function login()
     {
         $response = $this->modx->runProcessor('/security/login', [
@@ -28,7 +37,8 @@ class Auth extends \Zoomx\Controllers\Controller
      */
     public function logout()
     {
-       //return jsonx();
+        $this->modx->runProcessor('/security/logout');
+        redirectx('/');
     }
 
 
@@ -38,6 +48,13 @@ class Auth extends \Zoomx\Controllers\Controller
     public function register()
     {
         $email = trim($_POST['email'] ?? '');
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return jsonx([
+                'success' => false,
+                'errors' => ['email' => 'Введите корректный email'],
+            ]);
+        }
 
         $data = [
             "active" => 0,
@@ -50,30 +67,41 @@ class Auth extends \Zoomx\Controllers\Controller
             'passwordnotifymethod'  => 's',
         ];
 
+        $this->modx->user = $this->modx->getObject('modUser', 1); // админские права
         $response = $this->modx->runProcessor('security/user/create', $data);
 
         if ($response->isError()) {
+            $errors_tmp = $response->getAllErrors() ?: [];
+            $errors = [];
+            foreach ($errors_tmp as $i) {
+                $tmp = explode(': ', $i);
+                $errors[$tmp[0] === 'username' ? 'email' : $tmp[0]] = $tmp[1];
+            }
+
             return jsonx([
                 'success' => !$response->isError(),
                 'message' => $response->getMessage() ?? '',
-                'errors' => $response->getAllErrors() ?? [],
+                'errors' => $errors,
             ]);
         }
 
         $user = $this->modx->getObject('modUser', ['username' => $email]);
         $confirm_key = md5($user->username . ':' .$user->password);
-        $confirm_link = $this->modx->getOption('site_url') . "api/auth/confirm?user={$user->username}&key={$confirm_key}";
+        $confirm_url = $this->modx->getOption('site_url') . "api/auth/confirm-register?user={$user->username}&key={$confirm_key}";
 
         $email_params = [
             'subject' => 'Подтверждение регистрации',
-            'content' => 'Ссылка для подтверждения: ' . $confirm_link,
+            'content' => parserx()->parse(file_get_contents(MODX_CORE_PATH . 'app/templates/emails/register.tpl'), [
+                'title' => 'Подтверждение регистрации',
+                'confirm_url' => $confirm_url,
+                'email' => $email,
+            ]),
         ];
         email($email, $email_params);
 
         return jsonx([
             'success' => !$response->isError(),
-            'message' => $response->getMessage() ?? '',
-            'errors' => $response->getAllErrors() ?? [],
+            'message' => 'Спасибо за регистрацию на сайте! Далее вам нужно подтвердить свой email. Ссылка для подтверждения выслана на указанный вами email. Если письмо не пришло, проверьте папку «Спам»',
         ]);
     }
 
@@ -109,10 +137,11 @@ class Auth extends \Zoomx\Controllers\Controller
         $user->set('active', 1);
         $user->save();
 
-        return jsonx([
-            'success' => true,
-            'message' => 'ok',
-        ]);
+        redirectx('/?from=confirm-register');
+        // return jsonx([
+        //     'success' => true,
+        //     'message' => 'ok',
+        // ]);
     }
 
 
@@ -138,22 +167,27 @@ class Auth extends \Zoomx\Controllers\Controller
             ]);
         }
 
-        $pass = bin2hex(random_bytes(4));
+        $password = bin2hex(random_bytes(4));
         $key = bin2hex(random_bytes(24));
-        $_SESSION['new_password'] = $pass;
+        $_SESSION['new_password'] = $password;
         $_SESSION['new_password_key'] = $key;
         $_SESSION['new_password_email'] = $email;
-        $reset_link = $this->modx->getOption('site_url') . "api/auth/reset-password?key={$key}";
+        $reset_url = $this->modx->getOption('site_url') . "api/auth/reset-password?key={$key}";
 
         $email_params = [
             'subject' => 'Сброс пароля',
-            'content' => "Для сброса пароля пройдите по ссылке $reset_link. Ваш новый пароль: <b>$pass</b>.",
+            'content' => parserx()->parse(file_get_contents(MODX_CORE_PATH . 'app/templates/emails/forgot.tpl'), [
+                'title' => 'Сброс пароля',
+                'reset_url' => $reset_url,
+                'email' => $email,
+                'password' => $password,
+            ]),
         ];
         email($email, $email_params);
 
         return jsonx([
             'success' => true,
-            'message' => 'ok ' . $key,
+            'message' => 'Ссылка для сброса пароля выслана на указанный вами email. Если письмо не пришло, проверьте папку «Спам»'
         ]);
     }
 
@@ -171,7 +205,7 @@ class Auth extends \Zoomx\Controllers\Controller
         ) {
             return jsonx([
                 'success' => false,
-                'message' => 'Неверная ссылка',
+                'message' => 'wrong link',
             ]);
         }
 
@@ -191,9 +225,10 @@ class Auth extends \Zoomx\Controllers\Controller
 
         unset($_SESSION['new_password'], $_SESSION['new_password_key'], $_SESSION['new_password_email']);
 
-        return jsonx([
-            'success' => true,
-            'message' => 'ок ' . $user->username,
-        ]);
+        redirectx('/?from=reset-password');
+        // return jsonx([
+        //     'success' => true,
+        //     'message' => 'ок ' . $user->username,
+        // ]);
     }
 }

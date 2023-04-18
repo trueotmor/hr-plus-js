@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header('Access-Control-Max-Age: 1728000');
     header('Content-Length: 0');
     header('Content-Type: text/plain');
-    die();
+    //die();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,7 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
 }
 
+$router->get('/api/auth/is-auth', ['\App\Controllers\Auth', 'is_auth']);
 $router->post('/api/auth/login', ['\App\Controllers\Auth', 'login']);
+$router->get('/api/auth/logout', ['\App\Controllers\Auth', 'logout']);
 $router->post('/api/auth/register', ['\App\Controllers\Auth', 'register']);
 $router->post('/api/auth/forgot', ['\App\Controllers\Auth', 'forgot']);
 $router->get('/api/auth/confirm-register', ['\App\Controllers\Auth', 'confirm_register']);

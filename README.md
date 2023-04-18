@@ -2,18 +2,71 @@
 
 ## API
 
-В заголовках запроса указать `Content-Type: application/json`
+```
+GET /api/auth/is-auth
+
+Response: {
+    data: {
+        success: bool
+    }
+}
+```
+
 
 ```
 POST /api/auth/login
-{ username: string (email), password: string }
-{ success: bool, message: string (сообщение об ошибке) }
+
+Request: {
+    username: string (email),
+    password: string
+}
+
+Response: {
+    data: {
+        success: bool,
+        message: string (сообщение об ошибке)
+    }
+}
 ```
 @TODO rememberme
 
+
 ```
 POST /api/auth/register
-{ email: string, specifiedpassword: string, confirmpassword: string }
-{ success: bool, message: string, errors: array }
+
+Request: {
+    email: string,
+    specifiedpassword: string,
+    confirmpassword: string
+}
+
+Response: {
+    data: {
+        success: bool,
+        message: string,
+        errors: array
+    }
+}
 ```
-@TODO валидация email на бэке
+
+
+```
+POST /api/auth/forgot
+
+Request: {
+    email: string
+}
+
+Response: {
+    data: {
+        success: bool,
+        message: string,
+    }
+}
+```
+
+
+```
+GET /api/auth/logout
+```
+Открывать в браузере, делать запрос не нужно
