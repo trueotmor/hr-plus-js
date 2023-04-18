@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header('Access-Control-Max-Age: 1728000');
     header('Content-Length: 0');
     header('Content-Type: text/plain');
-    //die();
+    die();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
