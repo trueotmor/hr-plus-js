@@ -12,10 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     die();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET') {
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
-}
+// }
 
 $router->get('/api/auth/is-auth', ['\App\Controllers\Auth', 'is_auth']);
 $router->post('/api/auth/login', ['\App\Controllers\Auth', 'login']);
