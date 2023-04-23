@@ -1,2 +1,2 @@
 <?php
-class company extends xPDOSimpleObject {}
+class Company extends xPDOSimpleObject {}

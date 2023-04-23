@@ -2,6 +2,8 @@
 
 ## API
 
+### Auth
+
 ```
 GET /api/auth/is-auth
 
@@ -28,7 +30,6 @@ Response: {
     }
 }
 ```
-@TODO rememberme
 
 
 ```
@@ -70,3 +71,71 @@ Response: {
 GET /api/auth/logout
 ```
 Открывать в браузере, делать запрос не нужно
+
+
+
+### Company
+
+Доступные поля: name, brand, address, email, phone, site, contacts(json), inn, ogrn, description.
+
+
+```
+POST /api/company/new
+
+Request: {
+    name: string,
+    ...
+}
+
+Response: {
+    data: {
+        success: bool,
+        message: string (if error),
+    }
+}
+```
+
+
+```
+POST /api/company/list
+
+Response: {
+    data: {
+        success: bool,
+        data: array
+    }
+}
+
+```
+
+
+```
+POST /api/company/update
+
+Request: {
+    id: integer,
+    ...
+}
+
+Response: {
+    data: {
+        success: bool,
+        message: string (if error),
+    }
+}
+```
+
+
+```
+POST /api/company/delete
+
+Request: {
+    id: integer
+}
+
+Response: {
+    data: {
+        success: bool,
+        message: string (if error),
+    }
+}

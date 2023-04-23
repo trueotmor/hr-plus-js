@@ -13,11 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     die();
 }
 
-// if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'GET') {
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Credentials: true');
-    header('Content-Type: application/json');
-// }
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Credentials: true');
+header('Content-Type: application/json');
 
 $router->get('/api/auth/is-auth', ['\App\Controllers\Auth', 'is_auth']);
 $router->post('/api/auth/login', ['\App\Controllers\Auth', 'login']);
@@ -31,6 +29,7 @@ $router->post('/api/company/new', ['\App\Controllers\Company', 'new']);
 $router->post('/api/company/list', ['\App\Controllers\Company', 'list']);
 $router->post('/api/company/update', ['\App\Controllers\Company', 'update']);
 $router->post('/api/company/delete', ['\App\Controllers\Company', 'delete']);
+
 
 // $router->get('/crm', function() use ($modx) {
 //     return viewx("crm.tpl");

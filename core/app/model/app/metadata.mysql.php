@@ -3,7 +3,7 @@
 $xpdo_meta_map = array (
   'xPDOSimpleObject' => 
   array (
-    0 => 'company',
+    0 => 'Company',
     //1 => 'vacancy',
   ),
 );

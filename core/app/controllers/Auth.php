@@ -57,7 +57,7 @@ class Auth extends \Zoomx\Controllers\Controller
         }
 
         $data = [
-            "active" => 0,
+            "active" => 1, //пока без подтверждения
             'username' => $email,
             'email' => $email,
             'specifiedpassword' => trim($_POST['specifiedpassword'] ?? ''),

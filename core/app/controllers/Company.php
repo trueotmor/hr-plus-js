@@ -4,25 +4,48 @@ use Zoomx\Controllers;
 
 class Company extends \Zoomx\Controllers\Controller
 {
+    public $columns;
+
+
+    /**
+     * 
+     */
+    public function __construct($modx)
+	{
+		parent::__construct($modx);
+
+        if (!$this->modx->user->isAuthenticated('web')) {
+            return abortx(401);
+        }
+
+        $this->modx->addPackage('app', MODX_CORE_PATH . 'app/model/');
+
+        $this->columns = str_replace('`', '', explode(', ', $this->modx->getSelectColumns('Company')));
+	}
+
+
     /**
      * 
      */
     public function new()
     {
-        $this->modx->addPackage('app', MODX_CORE_PATH . 'app/model/');
-        $q = $this->modx->newQuery('Company');
-        $q->select('*');
-        $q->where([
+        if (!isset($_POST['name'])) {
+            return jsonx(['success' => false, 'message' => 'name is required']);
+        }
 
-        ]);
-        $q->sortby('createdon', 'DESC');
-        $q->prepare();
-        $q->stmt->execute();
-        $q_result = $q->stmt->fetchAll(\PDO::FETCH_ASSOC) ?: 0;
-        return $q_result;
+        $obj = $this->modx->newObject('Company');
+        $obj->set('user', $this->modx->user->id);
+
+        foreach ($_POST as $key => $val) {
+            if (in_array($key, $this->columns) && !in_array($key, ['id', 'createdon', 'user', 'logo'])) {
+                $obj->set($key, trim($val));
+            }
+        }
+
+        $success = (bool)$obj->save();
+
         return jsonx([
-            'success' => true,
-            'data' => $q_result
+            'success' => $success,
         ]);
     }
 
@@ -32,20 +55,74 @@ class Company extends \Zoomx\Controllers\Controller
      */
     public function list()
     {
-        $this->modx->addPackage('app', MODX_CORE_PATH . 'app/model/');
         $q = $this->modx->newQuery('Company');
-        $q->select('*');
+        $q->select($this->columns);
         $q->where([
-
+            'user' => $this->modx->user->id
         ]);
         $q->sortby('createdon', 'DESC');
         $q->prepare();
         $q->stmt->execute();
-        $q_result = $q->stmt->fetchAll(\PDO::FETCH_ASSOC) ?: 0;
-        return $q_result;
+        $q_result = $q->stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        
+        return jsonx(['success' => true, 'data' => $q_result]);
+    }
+
+
+    /**
+     * 
+     */
+    public function update()
+    {
+        if (!isset($_POST['id'])) {
+            return jsonx(['success' => false, 'message' => 'id is required']);
+        }
+
+        $obj = $this->modx->getObject('Company', [
+            'user' => $this->modx->user->id,
+            'id' => (int)$_POST['id'],
+        ]);
+
+        if (!$obj) {
+            return jsonx(['success' => false, 'message' => "company with id {$_POST['id']} not found"]);
+        }
+
+        foreach ($_POST as $key => $val) {
+            if (in_array($key, $this->columns) && !in_array($key, ['id', 'createdon', 'user', 'logo'])) {
+                $obj->set($key, trim($val));
+            }
+        }
+
+        $success = (bool)$obj->save();
+
         return jsonx([
-            'success' => true,
-            'data' => $q_result
+            'success' => $success,
+        ]);
+    }
+
+
+    /**
+     * 
+     */
+    public function delete()
+    {
+        if (!isset($_POST['id'])) {
+            return jsonx(['success' => false, 'message' => 'id is required']);
+        }
+
+        $obj = $this->modx->getObject('Company', [
+            'user' => $this->modx->user->id,
+            'id' => (int)$_POST['id'],
+        ]);
+
+        if (!$obj) {
+            return jsonx(['success' => false, 'message' => "company with id {$_POST['id']} not found"]);
+        }
+
+        $success = (bool)$obj->remove();
+
+        return jsonx([
+            'success' => $success,
         ]);
     }
 
