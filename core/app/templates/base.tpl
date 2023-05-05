@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="{'cultureKey'|config}">
     <head>
-        
+        <title>HR PLUS</title>
     </head>
 
     <body>

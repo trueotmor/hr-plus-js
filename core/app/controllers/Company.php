@@ -72,6 +72,26 @@ class Company extends \Zoomx\Controllers\Controller
     /**
      * 
      */
+    public function get($id)
+    {
+        $q = $this->modx->newQuery('Company');
+        $q->select($this->columns);
+        $q->where([
+            'user' => $this->modx->user->id,
+            'id' => $id,
+        ]);
+        $q->prepare();
+        $q->stmt->execute();
+        $q_result = $q->stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        $data = $q_result[0];
+        
+        return jsonx(['success' => !!$data, 'data' => $data]);
+    }
+
+
+    /**
+     * 
+     */
     public function update()
     {
         if (!isset($_POST['id'])) {
@@ -93,10 +113,22 @@ class Company extends \Zoomx\Controllers\Controller
             }
         }
 
+        if ($_FILES && $_FILES["logo"]["error"] === UPLOAD_ERR_OK) {
+            $path = MODX_ASSETS_PATH . "company/{$_POST['id']}";
+            if (!file_exists($path)) {
+                mkdir($path, 0777, true);
+            }
+
+            $path_info = pathinfo($_FILES["logo"]["name"]);
+            move_uploaded_file($_FILES["logo"]["tmp_name"], "{$path}/logo.{$path_info['extension']}");
+            echo "Файл загружен";
+        }
+
         $success = (bool)$obj->save();
 
         return jsonx([
             'success' => $success,
+            'files' => $_FILES
         ]);
     }
 

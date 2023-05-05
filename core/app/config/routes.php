@@ -15,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
 header('Access-Control-Allow-Credentials: true');
-header('Content-Type: application/json');
 
 $router->get('/api/auth/is-auth', ['\App\Controllers\Auth', 'is_auth']);
 $router->post('/api/auth/login', ['\App\Controllers\Auth', 'login']);
@@ -25,25 +24,12 @@ $router->post('/api/auth/forgot', ['\App\Controllers\Auth', 'forgot']);
 $router->get('/api/auth/confirm-register', ['\App\Controllers\Auth', 'confirm_register']);
 $router->get('/api/auth/reset-password', ['\App\Controllers\Auth', 'reset_password']);
 
+$router->get('/api/company/{id}', ['\App\Controllers\Company', 'get']);
 $router->post('/api/company/new', ['\App\Controllers\Company', 'new']);
 $router->post('/api/company/list', ['\App\Controllers\Company', 'list']);
 $router->post('/api/company/update', ['\App\Controllers\Company', 'update']);
 $router->post('/api/company/delete', ['\App\Controllers\Company', 'delete']);
 
-
-// $router->get('/crm', function() use ($modx) {
-//     return viewx("crm.tpl");
-// });
-
-
-$router->get('/login', function() use ($modx) {
-    return viewx("auth.tpl");
-});
-
-$router->get('/register', function() use ($modx) {
-    return viewx("auth.tpl");
-});
-
 $router->get('/', function() use ($modx) {
-    return viewx("auth.tpl");
+    return viewx("base.tpl");
 });
