@@ -8,6 +8,8 @@ node_modules
 /core/config/config.inc.php
 /public_html/assets/_cache
 /public_html/cgi-bin
+/public_html/assets/site/company
+
 /html
 
 /_docker/config/*
