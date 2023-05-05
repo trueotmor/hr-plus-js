@@ -44,7 +44,7 @@ $xpdo_meta_map['Company'] = [
 		'site' => $varchar,
 		'contacts' => [
 			'dbtype' => 'json',
-			'phptype' => 'array', 
+			'phptype' => 'string', 
 			'null' => true,
 		],
 		'inn' => $varchar,

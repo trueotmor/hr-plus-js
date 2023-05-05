@@ -1,6 +1,8 @@
 .cache
 .ssh
 .bash_history
+.vscode
+node_modules
 
 /core/cache
 /core/config/config.inc.php

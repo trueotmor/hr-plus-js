@@ -16,7 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
 header('Access-Control-Allow-Credentials: true');
 
-$router->get('/api/auth/is-auth', ['\App\Controllers\Auth', 'is_auth']);
+
+$router->get('/api/user', ['\App\Controllers\User', 'get']);
+
 $router->post('/api/auth/login', ['\App\Controllers\Auth', 'login']);
 $router->get('/api/auth/logout', ['\App\Controllers\Auth', 'logout']);
 $router->post('/api/auth/register', ['\App\Controllers\Auth', 'register']);

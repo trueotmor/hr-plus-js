@@ -84,6 +84,10 @@ class Company extends \Zoomx\Controllers\Controller
         $q->stmt->execute();
         $q_result = $q->stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         $data = $q_result[0];
+
+        if ($data && $data['logo']) {
+            $data['logo'] = $this->modx->getOption('site_url') . $data['logo'];
+        }
         
         return jsonx(['success' => !!$data, 'data' => $data]);
     }
@@ -114,14 +118,14 @@ class Company extends \Zoomx\Controllers\Controller
         }
 
         if ($_FILES && $_FILES["logo"]["error"] === UPLOAD_ERR_OK) {
-            $path = MODX_ASSETS_PATH . "company/{$_POST['id']}";
-            if (!file_exists($path)) {
+            $path = "assets/site/company/{$_POST['id']}";
+            if (!file_exists(MODX_BASE_PATH . $path)) {
                 mkdir($path, 0777, true);
             }
-
             $path_info = pathinfo($_FILES["logo"]["name"]);
-            move_uploaded_file($_FILES["logo"]["tmp_name"], "{$path}/logo.{$path_info['extension']}");
-            echo "Файл загружен";
+            $file = "{$path}/logo.{$path_info['extension']}";
+            move_uploaded_file($_FILES["logo"]["tmp_name"], MODX_BASE_PATH . $file);
+            $obj->set('logo', $file);
         }
 
         $success = (bool)$obj->save();

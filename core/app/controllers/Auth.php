@@ -38,7 +38,9 @@ class Auth extends \Zoomx\Controllers\Controller
     public function logout()
     {
         $this->modx->runProcessor('/security/logout');
-        redirectx('/');
+        return jsonx([
+            'success' => true
+        ]);
     }
 
 
@@ -60,6 +62,7 @@ class Auth extends \Zoomx\Controllers\Controller
             "active" => 1, //пока без подтверждения
             'username' => $email,
             'email' => $email,
+            'phone' => trim($_POST['phone'] ?? ''),
             'specifiedpassword' => trim($_POST['specifiedpassword'] ?? ''),
             'confirmpassword' => trim($_POST['confirmpassword'] ?? ''),
             'newpassword' => 'passwordgenmethod',

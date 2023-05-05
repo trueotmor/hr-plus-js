@@ -5,11 +5,12 @@
 ### Auth
 
 ```
-GET /api/auth/is-auth
+GET /api/user
 
 Response: {
     data: {
-        success: bool
+        success: bool,
+        data: array
     }
 }
 ```
