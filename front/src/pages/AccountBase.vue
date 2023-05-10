@@ -2,11 +2,10 @@
     import { ref, onMounted } from 'vue'
     import axios from 'axios'
     import { useRoute, useRouter } from 'vue-router'
-    import { biList, biArrowDownShort } from '@quasar/extras/bootstrap-icons'
+    import { mdiMenuDown, mdiMenu } from '@quasar/extras/mdi-v6'
 
     const route = useRoute()
     const router = useRouter()
-    const logoutUrl = import.meta.env.VITE_API_URL + '/auth/logout'
     const user = ref({})
     const title = ref('')
 
@@ -73,11 +72,17 @@
                     dense
                     round
                     @click="toggleLeftDrawer"
-                    :icon="biList"
+                    :icon="mdiMenu"
                 />
                 <q-toolbar-title>HR PLUS</q-toolbar-title>
 
-                <q-btn-dropdown stretch flat :label="user.email" :dropdown-icon="biArrowDownShort" class="text-lowercase">
+                <q-btn-dropdown stretch flat :dropdown-icon="mdiMenuDown" class="text-lowercase">
+                    <template v-slot:label>
+                        <div class="row items-center no-wrap q-gutter-x-sm">
+                            <q-avatar color="white" text-color="primary">A</q-avatar>
+                            <div>{{ user.email }}</div>
+                        </div>
+                    </template>
                     <q-list>
                         <q-item tabindex="0">
                             <!-- <q-item-section avatar>
@@ -101,6 +106,7 @@
         <q-drawer
             v-model="leftDrawerOpen"
             show-if-above
+            :width="250"
             bordered
         >
             <q-tree
@@ -124,6 +130,15 @@
                 <slot></slot>
             </div>
         </q-page-container>
+
+        <q-footer bordered class="bg-white text-black">
+            <q-toolbar>
+                <q-toolbar-title>
+                <div>footer</div>
+                </q-toolbar-title>
+            </q-toolbar>
+        </q-footer>
+
     </q-layout>
 </template>
 

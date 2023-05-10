@@ -3,7 +3,9 @@ import { createApp } from 'vue';
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 import { Quasar, Notify } from 'quasar'
-import quasarIconSet from 'quasar/icon-set/svg-bootstrap-icons'
+//import quasarIconSet from 'quasar/icon-set/svg-bootstrap-icons'
+import quasarIconSet from 'quasar/icon-set/svg-mdi-v7'
+
 //import '@quasar/extras/bootstrap-icons/bootstrap-icons.css'
 import 'quasar/dist/quasar.css'
 

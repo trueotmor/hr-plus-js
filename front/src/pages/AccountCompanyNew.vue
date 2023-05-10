@@ -45,6 +45,7 @@
                     <div class="col-6">
                         <q-input v-model="form[i.name]" outlined :name="i.name" :type="i.type || 'text'" :label="i.label"
                             :rules="i.rules || null"
+                            :hide-bottom-space="true"
                         />
                     </div>
                 </template>
