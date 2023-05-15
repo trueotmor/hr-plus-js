@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useRoute, useRouter } from 'vue-router'
 import { mdiMenuDown, mdiMenu, mdiAccountDetails, mdiChevronRight } from '@quasar/extras/mdi-v6'
@@ -40,6 +40,8 @@ onMounted(async () => {
 })
 
 const leftDrawerOpen = ref(false)
+const expandedTree = ref([])
+
 
 function toggleLeftDrawer () {
     leftDrawerOpen.value = !leftDrawerOpen.value
@@ -61,7 +63,6 @@ const menu = [
     }
 ]
 </script>
-
 
 <template>
     <q-layout view="lHh Lpr lFf" class="bg-white">
@@ -96,9 +97,9 @@ const menu = [
                 </q-btn-dropdown>
             </q-toolbar>
         </q-header>
-
         <q-drawer v-model="leftDrawerOpen" show-if-above :width="250" bordered>
-            <q-tree :nodes="menu" node-key="label" default-expand-all no-connectors :icon="mdiChevronRight">
+            <q-tree :nodes="menu" node-key="label" default-expand-all no-connectors :icon="mdiChevronRight"
+                v-model:expanded="expandedTree">
                 <template v-slot:default-header="prop">
                     <router-link v-if="prop.node.to" :to="prop.node.to">{{ prop.node.label }}</router-link>
                     <div v-else>
@@ -169,8 +170,25 @@ const menu = [
             }
         }
     }
+}
 
+.expanded {
+    background-color: aqua;
+}
 
+.q-tree__node--child {
+    padding: 8px 20px;
+
+    & div {
+        padding: 0;
+        font-size: 1em;
+        margin: 0;
+        border: none;
+    }
+}
+
+.q-tree__children {
+    padding-left: 45px;
 }
 
 .acc-subheader {
