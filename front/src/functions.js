@@ -31,7 +31,6 @@ const isAuth = async function() {
     })
 }
 
-
 export {
     request,
     isAuth,

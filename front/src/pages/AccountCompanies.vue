@@ -1,9 +1,11 @@
 <script setup>
-import { onMounted, ref, watch, watchEffect } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import axios from 'axios'
 import { biThreeDots } from '@quasar/extras/bootstrap-icons'
 import AccountBase from './AccountBase.vue'
 import { useElementSize } from '@vueuse/core'
+import { tableBreakPoints } from '../constants'
+import { tableColumns } from '../constants'
 
 const rows = ref([])
 const box = ref(null)
@@ -12,7 +14,7 @@ const { width } = useElementSize(box)
 axios.post('company/list')
     .then((response) => {
         rows.value = response.data.data.data
-        // console.log(response.data.data.data);
+        console.log(response.data.data.data)
     })
     .catch((error) => {
         console.log(error);
@@ -21,54 +23,38 @@ axios.post('company/list')
 const removingTables = (currendWidth) => {
     const { value: width } = currendWidth
     if (width < 300) {
-        return visibleColumns.value = ['name']
+        return visibleColumns.value = tableBreakPoints[300]
     }
 
     if (width < 400) {
-        return visibleColumns.value = ['name', 'inn']
+        return visibleColumns.value = tableBreakPoints[400]
     }
 
     if (width < 500) {
-        return visibleColumns.value = ['name', 'inn', 'vacancy']
+        return visibleColumns.value = tableBreakPoints[500]
     }
 
     if (width < 800) {
-        return visibleColumns.value = ['name', 'inn', 'vacancy', 'users']
+        return visibleColumns.value = tableBreakPoints[800]
     }
 
     if (width < 900) {
-        return visibleColumns.value = ['name', 'inn', 'vacancy', 'users', 'feedback']
+        return visibleColumns.value = tableBreakPoints[900]
     }
 
     if (width < 1000) {
-        return visibleColumns.value = ['name', 'inn', 'vacancy', 'users', 'feedback', 'action', 'user']
+        return visibleColumns.value = tableBreakPoints[1000]
     }
 
     if (width < 1300) {
-        return visibleColumns.value = ['name', 'inn', 'vacancy', 'users', 'feedback', 'action', 'user', 'createdon']
+        return visibleColumns.value = tableBreakPoints[1300]
     }
 }
 
-const columns = [
-    { name: 'name', label: 'Наименование организации', field: 'name', align: 'left' },
-    { name: 'inn', label: 'ИНН', field: 'inn', align: 'left' },
-    { name: 'vacancy', label: 'Вакансии', field: 'carbs' },
-    { name: 'users', label: 'Пользователи', field: 'users' },
-    { name: 'feedback', label: 'Отклики в работе', field: 'feedback' },
-    { name: 'action', label: 'Действие', field: 'action' },
-    { name: 'user', label: 'Создатель аккаунта', field: 'user', align: 'left' },
-    { name: 'createdon', label: 'Дата создания', field: 'createdon', align: 'left' },
-]
-
 const unvisibleColumns = ref([])
-
-const visibleColumns = ref(['name', 'inn', 'vacancy', 'users', 'feedback', 'action', 'user', 'createdon'])
+const visibleColumns = ref([])
 
 watch(width, () => removingTables(width), { deep: true })
-
-// console.log('width =', width.value)
-// console.log('visibleColumns =', visibleColumns.value)
-
 onMounted(() => removingTables(width))
 
 </script>
@@ -76,8 +62,33 @@ onMounted(() => removingTables(width))
 <template>
     <account-base>
         <div class="box" ref="box">
-            window size: {{ width }}
-            <q-table :rows="rows" :columns="columns" row-key="name" hide-bottom flat :visible-columns="visibleColumns">
+            <q-table :rows="rows" :columns="tableColumns" row-key="name" hide-bottom flat :visible-columns="visibleColumns">
+
+                <template v-slot:body="props">
+                    <q-tr :props="props">
+                        <q-td auto-width>
+                            <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand"
+                                :icon="props.expand ? 'remove' : 'add'"></q-btn>
+                        </q-td>
+                        <q-td v-for="col in props.cols" :key="col.name" :props="props">
+                            {{ col.value }}
+                        </q-td>
+                    </q-tr>
+                    <q-tr v-show="props.expand" :props="props">
+                        <q-td colspan="100%">
+                            <div class="text-left">This is expand slot for row above: {{ props.row.name }}.</div>
+                        </q-td>
+                    </q-tr>
+                </template>
+
+                <template v-slot:body-cell-btn="props">
+                    dadasd
+                    <q-td :props="props" auto-width>
+                        <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand"
+                            :icon="props.expand ? 'remove' : 'add'"></q-btn>
+                    </q-td>
+                </template>
+
                 <template v-slot:body-cell-name="props">
                     <q-td :props="props">
                         <router-link :to="`/account/company/${props.row.id}`">{{ props.row.name }}</router-link>
@@ -125,8 +136,8 @@ onMounted(() => removingTables(width))
                         </q-btn-dropdown>
                     </q-td>
                 </template>
+
             </q-table>
-            <pre> {{ rows }}</pre>
         </div>
     </account-base>
 </template>
