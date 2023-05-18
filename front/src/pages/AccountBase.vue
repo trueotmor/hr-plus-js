@@ -172,10 +172,6 @@ const menu = [
     }
 }
 
-.expanded {
-    background-color: aqua;
-}
-
 .q-tree__node--child {
     padding: 8px 20px;
 
