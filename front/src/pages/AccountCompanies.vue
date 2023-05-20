@@ -36,14 +36,13 @@ const visibleColumns = computed(() => {
         <div class="box" ref="box">
             <q-table :rows="rows" :columns="tableColumns" row-key="name" hide-bottom flat :visible-columns="visibleColumns"
                 binary-state-sort class="companies__table">
-                <!-- топ -->
-                <template v-slot:top>
-                    <q-input dense debounce="300" color="primary" v-model="filter" bg-color="red">
-                        <template v-slot:append>
-                            <q-icon name="поиск" />
-                        </template>
-                    </q-input>
-                </template>
+
+                <!-- <template v-slot:header="props">
+                    <q-td :props="props">
+                        <router-link :to="`/account/company/${props.row.id}`">{{ props.row.name }}</router-link>
+                    </q-td>
+                </template> -->
+
                 <!-- шапка -->
                 <template v-slot:header="props">
                     <q-tr :props="props">
@@ -70,32 +69,32 @@ const visibleColumns = computed(() => {
                             </q-btn>
                         </q-td>
                         <q-td v-for=" col  in  props.cols " :key="col.name" :props="props">
-                            <q-btn-dropdown color="" flat label="" :dropdown-icon="biThreeDots" class="text-primary"
-                                size="10px" padding="10px" no-icon-animation v-if="col.name === 'action'">
+                            <q-btn-dropdown flat :dropdown-icon="biThreeDots" class="text-primary" size="10px"
+                                padding="10px" no-icon-animation v-if="col.name === 'action'">
                                 <q-list class="companies__menu-list">
                                     <q-item clickable v-close-popup @click=" ">
                                         <q-item-section>
-                                            <q-item-label>
-                                                <q-icon :name="biEyeFill" color="light-blue-5" />
-                                                Просмотр
-                                            </q-item-label>
+                                            <q-icon :name="biEyeFill" color="light-blue-5"
+                                                class="companies__action-icon companies__action-icon--blue" />
+                                            <q-item-label>Просмотр</q-item-label>
                                         </q-item-section>
                                     </q-item>
                                     <q-item clickable v-close-popup @click=" ">
                                         <q-item-section>
-                                            <q-icon :name="biPencilFill" color="green-12" size="12px" />
-                                            <q-item-label> Редактирование</q-item-label>
+                                            <q-icon :name="biPencilFill" color="green-12"
+                                                class="companies__action-icon companies__action-icon--green" />
+                                            <q-item-label>Редактирование</q-item-label>
                                         </q-item-section>
                                     </q-item>
                                     <q-item clickable v-close-popup @click=" ">
                                         <q-item-section>
-                                            <q-icon :name="biX" color="red-5" size="20px" />
-                                            <q-item-label> Удаление</q-item-label>
+                                            <q-icon :name="biX" color="red-5"
+                                                class="companies__action-icon companies__action-icon--red" />
+                                            <q-item-label>Удаление</q-item-label>
                                         </q-item-section>
                                     </q-item>
                                 </q-list>
                             </q-btn-dropdown>
-                            {{ col.value }}
                         </q-td>
                     </q-tr>
                     <!-- скрытый контент -->
@@ -114,6 +113,11 @@ const visibleColumns = computed(() => {
                         </q-td>
                     </q-tr>
                 </template>
+                <!-- <template v-slot:body-cell-name="props">
+                    <q-td :props="props">
+                        <router-link :to="`/account/company/${props.row.id}`">{{ props.row.name }}</router-link>
+                    </q-td>
+                </template> -->
             </q-table>
         </div>
     </account-base>
@@ -144,16 +148,12 @@ const visibleColumns = computed(() => {
 }
 
 .companies__table {
-    & .q-table__top {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    }
-
     & thead {
         background: #F6F6F7;
 
-        ::before & th {
+        & th {
             font-size: 1em;
-            font-weight: 800;
+            font-weight: 700;
             color: #4B4B5A;
             padding: 16px 30px;
         }
@@ -163,6 +163,7 @@ const visibleColumns = computed(() => {
 
     & th.sortable {
         direction: rtl;
+        padding-left: 0;
     }
 
     &-button {
@@ -175,6 +176,12 @@ const visibleColumns = computed(() => {
         & .q-focus-helper {
             display: none;
         }
+    }
+}
+
+.companies__action-icon {
+    &--red svg {
+        transform: scale(1.5);
     }
 }
 </style>
